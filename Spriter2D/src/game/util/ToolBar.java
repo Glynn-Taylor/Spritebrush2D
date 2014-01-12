@@ -83,7 +83,9 @@ public class ToolBar {
 		frame.getContentPane().add(panel, BorderLayout.WEST);
 		// frame.getContentPane().add(label);
 		frame.pack();
+		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		frame.setAlwaysOnTop(true);
 	}
 
 }

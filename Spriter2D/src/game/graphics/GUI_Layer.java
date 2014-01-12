@@ -31,7 +31,8 @@ public class GUI_Layer {
 	private final long RegisterClickDelay = 300;
 	private boolean Enabled = true;
 	private final ArrayList<GUI_Object> objects = new ArrayList<GUI_Object>();
-
+	private GUI_Layer_Controller Controller;
+	
 	public void Render() {
 		if (Enabled) {
 
@@ -98,6 +99,16 @@ public class GUI_Layer {
 		objects.get(i).ReleaseClicks();
 		objects.get(i).OnEndActivation();
 	}
+	public void flushAll() {
+		if (Enabled) {
+			for (int i = 0; i < Buttons.size(); i++) {
+				
+			}
+			for (int i = 0; i < objects.size(); i++) {
+				flushObject(i);
+			}
+		}
+	}
 
 	public void SetEnabled(boolean i) {
 		Enabled = i;
@@ -118,6 +129,8 @@ public class GUI_Layer {
 	}
 
 	public boolean isElementDown(int object, int element) {
+		if(objects.get(object).isElementDown(element))
+			flushAll();
 		return objects.get(object).isElementDown(element);
 
 	}
@@ -173,5 +186,8 @@ public class GUI_Layer {
 			objects.get(i).onResize();
 		}
 		
+	}
+	public void setController(GUI_Layer_Controller lc){
+		Controller=lc;
 	}
 }

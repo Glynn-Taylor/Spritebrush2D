@@ -91,13 +91,11 @@ public class State_SPRITER extends State {
 		HEIGHT=Game.Height;
 		font = LoadFont("ABEAKRG");
 		float ButtonStartRX = (5f / 19f );
-		float ButtonStartRY =  (9f / 10f );
+		//float ButtonStartRY =  (9f / 10f );
 		float ButtonRWidth =  (14f / 171f);
-		float ButtonRHeight =  (1f / 10f);
-		int ButtonStartX = (int) (5f / 19f * WIDTH);
-		int ButtonStartY = (int) (9f / 10f * HEIGHT);
-		int ButtonWidth = (int) (14f / 171f * WIDTH);
-		int ButtonHeight = (int) (1f / 10f * HEIGHT);
+		//float ButtonRHeight =  (1f / 10f);
+		int DropDownHeight = (int)(HEIGHT * 1f / 15f);
+		int BaseBarHeight = (int)(HEIGHT * 1f / 15f);
 		try {
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			Texture playButton = TextureLoader
@@ -143,13 +141,13 @@ public class State_SPRITER extends State {
 							ResourceLoader
 									.getResourceAsStream("res/Materials/GUI/Buttons/Button_Palette.png"),
 							false, GL11.GL_NEAREST);
-			GUI.AddButton(new RelativeDimensions(5f / 19f, 9f / 10f, 14f / 171f, 1f / 10f), firstButton);
-			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f, 9f / 10f, 14f / 171f, 1f / 10f), pauseButton);
+			GUI.AddButton(new RelativeDimensions(5f / 19f, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), firstButton);
+			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), pauseButton);
 			
-			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f*2, 9f / 10f, 14f / 171f, 1f / 10f), playButton);
+			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f*2, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), playButton);
 			
-			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f*3, 9f / 10f, 14f / 171f, 1f / 10f), backButton);
-			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f*5, 9f / 10f, 14f / 171f, 1f / 10f), forwardButton);
+			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f*3, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), backButton);
+			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f*5, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), forwardButton);
 			Texture button2 = TextureLoader
 					.getTexture(
 							"PNG",
@@ -172,10 +170,11 @@ public class State_SPRITER extends State {
 							ResourceLoader
 									.getResourceAsStream("res/Materials/GUI/Backgrounds/DefaultBackground.png"));
 			FrameCount = new GUI_Text_Field(new RelativeDimensions(ButtonStartRX + ButtonRWidth * 4,
-					ButtonStartRY, ButtonRWidth, ButtonRHeight), "0", font);
+					1-BaseBarHeight/(float)HEIGHT, ButtonRWidth, BaseBarHeight/(float)HEIGHT), "0", font);
+			
 			GUI_List_DropDown_ANIMATIONS AnimationList = new GUI_List_DropDown_ANIMATIONS(
-					ButtonStartX + ButtonWidth * 6, ButtonStartY, WIDTH
-							- (ButtonStartX + ButtonWidth * 6), ButtonHeight,
+					(int) (ButtonStartRX* WIDTH) + (int) (ButtonRWidth * WIDTH) * 6, HEIGHT-BaseBarHeight, WIDTH
+							- ((int) (ButtonStartRX* WIDTH) + (int) (ButtonRWidth * WIDTH) * 6), BaseBarHeight,
 					new GUI_Object_Element(new RelativeDimensions(0, 0, 0, 0), button2, "Animation"),
 					new GUI_Object_Element[] {}, font);
 			ProjectScrollList = new GUI_List_Scroll_Project(new RelativeDimensions(0,
@@ -214,19 +213,20 @@ public class State_SPRITER extends State {
 			// PALETTE
 			// 5
 			GUI.AddObject(new GUI_Renderer_Palette(new RelativeDimensions(0,
-					7f / 20f, 5f / 19f,
-					3f / 10f), ColorRenderer, 126, 9));
+					7f / 20f-DropDownHeight/(float)HEIGHT, 5f / 19f,
+					3f / 10f+DropDownHeight/(float)HEIGHT), ColorRenderer, 126, 9));
 			// PICKER
 			// 6
 			GUI.AddObject(new GUI_Renderer_ColorInterface(new RelativeDimensions(0,
-					1f / 10f, 5f / 19f,
+					1f / 10f-DropDownHeight/(float)HEIGHT, 5f / 19f,
 					1f / 4f), ColorRenderer, SwitchButton,
 					PaletteButton));
 
 			// DROP DOWNS
 			// 7
+			
 			GUI.AddObject(new GUI_List_DropDown(0, 0, (int) (WIDTH * 1f / 5f),
-					(int) (HEIGHT * 1f / 10f), new GUI_Object_Element(new RelativeDimensions(0, 0, 0,
+					DropDownHeight, new GUI_Object_Element(new RelativeDimensions(0, 0, 0,
 							0), button2, "File"), new GUI_Object_Element[] {
 							new GUI_Object_Element(button2,
 									"New project.."),
@@ -244,7 +244,7 @@ public class State_SPRITER extends State {
 									"Import GIF..")}, font));
 			// 8
 			GUI.AddObject(new GUI_List_DropDown((int) (WIDTH * 1f / 5f), 0,
-					(int) (WIDTH * 1f / 5f), (int) (HEIGHT * 1f / 10f),
+					(int) (WIDTH * 1f / 5f), DropDownHeight,
 					new GUI_Object_Element( button2, "New"),
 					new GUI_Object_Element[] {
 							new GUI_Object_Element(button2,
@@ -253,7 +253,7 @@ public class State_SPRITER extends State {
 									"Animation..") }, font));
 			// 9
 			GUI.AddObject(new GUI_List_DropDown((int) (WIDTH * 2f / 5f), 0,
-					(int) (WIDTH * 1f / 5f), (int) (HEIGHT * 1f / 10f),
+					(int) (WIDTH * 1f / 5f), DropDownHeight,
 					new GUI_Object_Element( button2, "Edit"),
 					new GUI_Object_Element[] {
 							new GUI_Object_Element( button2,
@@ -268,7 +268,7 @@ public class State_SPRITER extends State {
 									"Paste clipboard image") }, font));
 			// 10
 			GUI.AddObject(new GUI_List_DropDown((int) (WIDTH * 3f / 5f), 0,
-					(int) (WIDTH * 1f / 5f), (int) (HEIGHT * 1f / 10f),
+					(int) (WIDTH * 1f / 5f), DropDownHeight,
 					new GUI_Object_Element( button2, "View"),
 					new GUI_Object_Element[] {
 							new GUI_Object_Element( button2,
@@ -280,7 +280,7 @@ public class State_SPRITER extends State {
 			// MISC
 			// 11
 			GUI.AddObject(new GUI_Text_Field(new RelativeDimensions( 4f / 5f, 0,
-					1f / 5f, 1f / 10f), "",
+					1f / 5f, DropDownHeight/(float)HEIGHT), "",
 					font));
 			picker = new ColorPicker(ColorRenderer);
 		} catch (IOException e) {
@@ -356,15 +356,7 @@ public class State_SPRITER extends State {
 				// System.out.println("Sprite change complete");
 			}
 		}
-		/*
-		 * goe = GUI.getElementDown(1); if (goe != null) { try { GUI.addElement(
-		 * 1, new GUI_Object_Element( 55, 55, 90, 10, TextureLoader.getTexture(
-		 * "PNG", ResourceLoader
-		 * .getResourceAsStream("res/Materials/GUI/Buttons/DefaultButton.png"),
-		 * false, GL11.GL_NEAREST), "ElementRUNTIME")); } catch (IOException e)
-		 * { // TODO Auto-generated catch block e.printStackTrace(); }
-		 * testString = goe.getName(); }
-		 */
+		
 	}
 
 	private void ProcessFileMenu() {
