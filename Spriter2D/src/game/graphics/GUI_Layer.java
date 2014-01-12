@@ -17,6 +17,7 @@
 package game.graphics;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -25,12 +26,14 @@ import org.newdawn.slick.opengl.Texture;
 
 public class GUI_Layer {
 	private final ArrayList<GUI_Button> Buttons = new ArrayList<GUI_Button>();
+	private HashMap<String,Integer> ButtonNameToIndex = new HashMap<String, Integer>();
 	private boolean[] ButtonClicked;
 	private final ArrayList<Boolean> ObjectPressed = new ArrayList<Boolean>();
 	private static long LastClickTime;
 	private final long RegisterClickDelay = 300;
 	private boolean Enabled = true;
 	private final ArrayList<GUI_Object> objects = new ArrayList<GUI_Object>();
+	private HashMap<String,Integer> ObjectNameToIndex = new HashMap<String, Integer>();
 	private GUI_Layer_Controller Controller;
 	
 	public void Render() {
@@ -47,15 +50,15 @@ public class GUI_Layer {
 
 	}
 
-	public void toggleObjectEnabled(int i) {
-		objects.get(i).toggleEnabled();
+	public void toggleObjectEnabled(String object) {
+		objects.get(ObjectNameToIndex.get(object)).toggleEnabled();
 	}
 
-	public void setObjectEnabled(int i, boolean b) {
-		objects.get(i).SetEnabled(b);
+	public void setObjectEnabled(String object, boolean b) {
+		objects.get(ObjectNameToIndex.get(object)).SetEnabled(b);
 	}
 
-	public void ProcessInput(int mouseX, int mouseY, boolean mouseDown) {
+	public boolean ProcessInput(int mouseX, int mouseY, boolean mouseDown) {
 		if (Enabled) {
 			for (int i = 0; i < Buttons.size(); i++) {
 				if (Buttons.get(i).InsideButton(mouseX, mouseY)
@@ -63,6 +66,7 @@ public class GUI_Layer {
 						&& System.currentTimeMillis() - LastClickTime > RegisterClickDelay) {
 					ButtonClicked[i] = true;
 					LastClickTime = System.currentTimeMillis();
+					return true;
 				} else {
 					ButtonClicked[i] = false;
 				}
@@ -74,6 +78,7 @@ public class GUI_Layer {
 						if (objects.get(i).ProcessInput(mouseX, mouseY,
 								mouseDown)) {
 							LastClickTime = System.currentTimeMillis();
+							return true;
 						} else {
 							objects.get(i).ReleaseClicks();
 
@@ -83,19 +88,25 @@ public class GUI_Layer {
 
 			}
 		}
+		return false;
 	}
 
-	public void AddButton(RelativeDimensions absoluteDimensions, Texture t) {
+	public void AddButton(String name,RelativeDimensions absoluteDimensions, Texture t) {
+		ButtonNameToIndex.put(name, Buttons.size());
 		Buttons.add(new GUI_Button(absoluteDimensions, t));
 		ButtonClicked = new boolean[Buttons.size()];
 	}
 
-	public void AddObject(GUI_Object obj) {
+	public void addObject(String name,GUI_Object obj) {
+		ObjectNameToIndex.put(name, objects.size());
 		objects.add(obj);
 
 	}
-
-	public void flushObject(int i) {
+	public void flushObject(String object) {
+		objects.get(ObjectNameToIndex.get(object)).ReleaseClicks();
+		objects.get(ObjectNameToIndex.get(object)).OnEndActivation();
+	}
+	private void flushObject(int i) {
 		objects.get(i).ReleaseClicks();
 		objects.get(i).OnEndActivation();
 	}
@@ -118,41 +129,41 @@ public class GUI_Layer {
 		Enabled = !Enabled;
 	}
 
-	public boolean isButtonDown(int i) {
+	public boolean isButtonDown(String object) {
 		if (Enabled) {
-			if (ButtonClicked[i] == true) {
-				ButtonClicked[i] = false;
+			if (ButtonClicked[ButtonNameToIndex.get(object)] == true) {
+				ButtonClicked[ButtonNameToIndex.get(object)] = false;
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean isElementDown(int object, int element) {
-		if(objects.get(object).isElementDown(element))
-			flushAll();
-		return objects.get(object).isElementDown(element);
+	public boolean isElementDown(String object, int element) {
+		//if(objects.get(ObjectNameToIndex.get(object)).isElementDown(element))
+			//flushAll();
+		return objects.get(ObjectNameToIndex.get(object)).isElementDown(element);
 
 	}
 
-	public GUI_Object_Element getElementDown(int object) {
+	public GUI_Object_Element getElementDown(String object) {
 
-		return objects.get(object).getElementDown();
-
-	}
-
-	public int getIndexDown(int object) {
-
-		return objects.get(object).getIndexDown();
+		return objects.get(ObjectNameToIndex.get(object)).getElementDown();
 
 	}
 
-	public String getElementName(int object, int element) {
-		return objects.get(object).getElementName(element);
+	public int getIndexDown(String object) {
+
+		return objects.get(ObjectNameToIndex.get(object)).getIndexDown();
+
 	}
 
-	public void addElement(int object, GUI_Object_Element element) {
-		objects.get(object).addElement(element);
+	public String getElementName(String object, int element) {
+		return objects.get(ObjectNameToIndex.get(object)).getElementName(element);
+	}
+
+	public void addElement(String object, GUI_Object_Element element) {
+		objects.get(ObjectNameToIndex.get(object)).addElement(element);
 
 	}
 

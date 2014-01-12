@@ -23,6 +23,7 @@ import game.data.sprite.Colour;
 import game.data.sprite.SpriteData;
 import game.graphics.GUI_Entity;
 import game.graphics.GUI_Layer;
+import game.graphics.GUI_Layer_Controller;
 import game.graphics.GUI_List_DropDown;
 import game.graphics.GUI_List_DropDown_ANIMATIONS;
 import game.graphics.GUI_List_Scroll_Project;
@@ -76,7 +77,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 public class State_SPRITER extends State {
-	private final GUI_Layer GUI = new GUI_Layer();
+	private GUI_Layer_Controller GUI_Controller = new GUI_Layer_Controller();
+	//private final 
 	UnicodeFont font;
 	int WIDTH,HEIGHT;
 	private GUI_Renderer_ColorArray ColorRenderer;
@@ -87,13 +89,15 @@ public class State_SPRITER extends State {
 
 	@Override
 	protected void Init() {
+		GUI_Layer Layer_DropdownBar = new GUI_Layer();
+		GUI_Layer Layer_SideBar = new GUI_Layer();
+		GUI_Layer Layer_BottomBar = new GUI_Layer();
+		GUI_Layer Layer_SpriteEditor = new GUI_Layer();
 		WIDTH=Game.Width;
 		HEIGHT=Game.Height;
 		font = LoadFont("ABEAKRG");
 		float ButtonStartRX = (5f / 19f );
-		//float ButtonStartRY =  (9f / 10f );
 		float ButtonRWidth =  (14f / 171f);
-		//float ButtonRHeight =  (1f / 10f);
 		int DropDownHeight = (int)(HEIGHT * 1f / 15f);
 		int BaseBarHeight = (int)(HEIGHT * 1f / 15f);
 		try {
@@ -141,34 +145,28 @@ public class State_SPRITER extends State {
 							ResourceLoader
 									.getResourceAsStream("res/Materials/GUI/Buttons/Button_Palette.png"),
 							false, GL11.GL_NEAREST);
-			GUI.AddButton(new RelativeDimensions(5f / 19f, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), firstButton);
-			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), pauseButton);
-			
-			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f*2, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), playButton);
-			
-			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f*3, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), backButton);
-			GUI.AddButton(new RelativeDimensions(5f / 19f+14f / 171f*5, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), forwardButton);
-			Texture button2 = TextureLoader
-					.getTexture(
-							"PNG",
-							ResourceLoader
-									.getResourceAsStream("res/Materials/GUI/Buttons/DefaultButton.png"),
-							false, GL11.GL_NEAREST);
-			// GUI.AddButton(ButtonStartX, ButtonStartY + Spacing * 1,
-			// button2.getImageWidth(), button2.getImageHeight(), button2);
 			Texture button3 = TextureLoader
-					.getTexture(
-							"PNG",
-							ResourceLoader
-									.getResourceAsStream("res/Materials/GUI/Buttons/DefaultButton.png"),
-							false, GL11.GL_NEAREST);
-			// GUI.AddButton(ButtonStartX, ButtonStartY + Spacing * 2,
-			// button3.getImageWidth(), button3.getImageHeight(), button3);
+			.getTexture(
+					"PNG",
+					ResourceLoader
+							.getResourceAsStream("res/Materials/GUI/Buttons/DefaultButton.png"),
+					false, GL11.GL_NEAREST);
+			Texture button2 = TextureLoader
+			.getTexture(
+					"PNG",
+					ResourceLoader
+							.getResourceAsStream("res/Materials/GUI/Buttons/DefaultButton.png"),
+					false, GL11.GL_NEAREST);
+	
 			BackGroundImage = TextureLoader
-					.getTexture(
-							"PNG",
-							ResourceLoader
-									.getResourceAsStream("res/Materials/GUI/Backgrounds/DefaultBackground.png"));
+			.getTexture(
+					"PNG",
+					ResourceLoader
+							.getResourceAsStream("res/Materials/GUI/Backgrounds/DefaultBackground.png"));
+			
+			
+			
+			
 			FrameCount = new GUI_Text_Field(new RelativeDimensions(ButtonStartRX + ButtonRWidth * 4,
 					1-BaseBarHeight/(float)HEIGHT, ButtonRWidth, BaseBarHeight/(float)HEIGHT), "0", font);
 			
@@ -180,52 +178,42 @@ public class State_SPRITER extends State {
 			ProjectScrollList = new GUI_List_Scroll_Project(new RelativeDimensions(0,
 					 3f / 4f, 5f / 19f,
 					1/ 4f), button3, 5, font);
-			// Drawing
-			// 0
 			ColorRenderer = new GUI_Renderer_ColorArray(new RelativeDimensions(
 					  5f / 19f,  1f / 10f, 1
 							-   5f / 19f,
 					  4f / 5f), CreateColorArray(32, 32),
 					FrameCount, AnimationList);
-			GUI.AddObject(ColorRenderer);
-			// SCROLL
-			// 1
-			GUI.AddObject(ProjectScrollList);
-			/*
-			 * for (int i = 0; i < 25; i++) { GUI.addElement(1, new
-			 * GUI_Object_Element(55, 55, 90, 10, button3, "Element" +
-			 * Integer.toString(i))); }
-			 */
-			ProjectName = new GUI_Text_Field(new RelativeDimensions(0, 13f / 20f ,
-					5f / 19f ,  1f / 10f ),
+			ProjectName = new GUI_Text_Field(new RelativeDimensions(0, 20f / 30f ,
+					5f / 19f ,  5f / 60f ),
 					"No project", font);
-			// FIELDS
-			// 2
-
-			GUI.AddObject(FrameCount);
-			// 3
-			GUI.AddObject(ProjectName);
-			// 4
-			GUI.AddObject(AnimationList);
-			// GUI.AddObject(new GUI_Text_Field(ButtonStartX + ButtonWidth * 6,
-			// ButtonStartY, WIDTH - (ButtonStartX + ButtonWidth * 6),
-			// ButtonHeight, "ANIMATION", font));
-			// PALETTE
-			// 5
-			GUI.AddObject(new GUI_Renderer_Palette(new RelativeDimensions(0,
-					7f / 20f-DropDownHeight/(float)HEIGHT, 5f / 19f,
-					3f / 10f+DropDownHeight/(float)HEIGHT), ColorRenderer, 126, 9));
-			// PICKER
-			// 6
-			GUI.AddObject(new GUI_Renderer_ColorInterface(new RelativeDimensions(0,
-					1f / 10f-DropDownHeight/(float)HEIGHT, 5f / 19f,
+			
+			///////////////////////////////SPRITE WINDOW////////////////////////////////////////////
+			Layer_SpriteEditor.addObject("SpriteWindow",ColorRenderer);
+			
+			///////////////////////////////SIDE BAR//////////////////////////////////////////////
+			Layer_SideBar.addObject("ToolColours",new GUI_Renderer_ColorInterface(new RelativeDimensions(0,
+					DropDownHeight/(float)HEIGHT, 5f / 19f,
 					1f / 4f), ColorRenderer, SwitchButton,
 					PaletteButton));
-
-			// DROP DOWNS
-			// 7
+			Layer_SideBar.addObject("SpriteScrollList",ProjectScrollList);
 			
-			GUI.AddObject(new GUI_List_DropDown(0, 0, (int) (WIDTH * 1f / 5f),
+			Layer_SideBar.addObject("Palette",new GUI_Renderer_Palette(new RelativeDimensions(0,
+					5f / 20f+DropDownHeight/(float)HEIGHT, 5f / 19f,
+					3f / 10f+DropDownHeight/(float)HEIGHT), ColorRenderer, 126, 9));
+			Layer_SideBar.addObject("SpriteLabel",ProjectName);
+			
+			
+			///////////////////////////////BOTTOM BAR////////////////////////////////////////////
+			Layer_BottomBar.AddButton("Start",new RelativeDimensions(5f / 19f, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), firstButton);
+			Layer_BottomBar.AddButton("Pause",new RelativeDimensions(5f / 19f+14f / 171f, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), pauseButton);	
+			Layer_BottomBar.AddButton("Play",new RelativeDimensions(5f / 19f+14f / 171f*2, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), playButton);
+			Layer_BottomBar.AddButton("PrevFrame",new RelativeDimensions(5f / 19f+14f / 171f*3, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), backButton);
+			Layer_BottomBar.AddButton("NextFrame",new RelativeDimensions(5f / 19f+14f / 171f*5, 1f-(float)BaseBarHeight/(float)HEIGHT, 14f / 171f, (float)BaseBarHeight/(float)HEIGHT), forwardButton);
+			Layer_BottomBar.addObject("FrameLabel",FrameCount);
+			Layer_BottomBar.addObject("AnimList",AnimationList);
+			
+			///////////////////////////////DROPDOWN BAR//////////////////////////////////////////
+			Layer_DropdownBar.addObject("File",new GUI_List_DropDown(0, 0, (int) (WIDTH * 1f / 5f),
 					DropDownHeight, new GUI_Object_Element(new RelativeDimensions(0, 0, 0,
 							0), button2, "File"), new GUI_Object_Element[] {
 							new GUI_Object_Element(button2,
@@ -242,8 +230,7 @@ public class State_SPRITER extends State {
 									"Export sprite PNG.."),
 							new GUI_Object_Element( button2,
 									"Import GIF..")}, font));
-			// 8
-			GUI.AddObject(new GUI_List_DropDown((int) (WIDTH * 1f / 5f), 0,
+			Layer_DropdownBar.addObject("New",new GUI_List_DropDown((int) (WIDTH * 1f / 5f), 0,
 					(int) (WIDTH * 1f / 5f), DropDownHeight,
 					new GUI_Object_Element( button2, "New"),
 					new GUI_Object_Element[] {
@@ -251,8 +238,7 @@ public class State_SPRITER extends State {
 									"Sprite.."),
 							new GUI_Object_Element(button2,
 									"Animation..") }, font));
-			// 9
-			GUI.AddObject(new GUI_List_DropDown((int) (WIDTH * 2f / 5f), 0,
+			Layer_DropdownBar.addObject("Edit",new GUI_List_DropDown((int) (WIDTH * 2f / 5f), 0,
 					(int) (WIDTH * 1f / 5f), DropDownHeight,
 					new GUI_Object_Element( button2, "Edit"),
 					new GUI_Object_Element[] {
@@ -266,8 +252,7 @@ public class State_SPRITER extends State {
 									"Paste frame"),
 							new GUI_Object_Element( button2,
 									"Paste clipboard image") }, font));
-			// 10
-			GUI.AddObject(new GUI_List_DropDown((int) (WIDTH * 3f / 5f), 0,
+			Layer_DropdownBar.addObject("View",new GUI_List_DropDown((int) (WIDTH * 3f / 5f), 0,
 					(int) (WIDTH * 1f / 5f), DropDownHeight,
 					new GUI_Object_Element( button2, "View"),
 					new GUI_Object_Element[] {
@@ -277,12 +262,16 @@ public class State_SPRITER extends State {
 									"Zoom out"),
 							new GUI_Object_Element(button2,
 									"Center view") }, font));
-			// MISC
-			// 11
-			GUI.AddObject(new GUI_Text_Field(new RelativeDimensions( 4f / 5f, 0,
-					1f / 5f, DropDownHeight/(float)HEIGHT), "",
-					font));
+			
+			
 			picker = new ColorPicker(ColorRenderer);
+			
+			//**Layer ordering**//
+			//0 is frontmost element//
+			GUI_Controller.addLayer(Layer_DropdownBar, "DropDownBar");
+			GUI_Controller.addLayer(Layer_SideBar, "SideBar");
+			GUI_Controller.addLayer(Layer_BottomBar, "BottomBar");
+			GUI_Controller.addLayer(Layer_SpriteEditor, "SpriteEditor");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -308,78 +297,93 @@ public class State_SPRITER extends State {
 
 	@Override
 	protected void ProcessInput() {
+		//Check if user resized window
 		CheckResized();
-		// Not funtioning (zoom/center) for large grids?
+		//Handle key presses
 		RendererControls();
+		//Push primary mouse click to GUI objects
+		GUI_Controller.ProcessInput(MouseLastX, MouseLastY, Mouse.isButtonDown(0));
+		//Control Side bar clicks
+		ProcessSideBar();
+		//Control Bottom bar clicks
+		ProcessBottomBar();
+		//Control Top bar clicks
+		ProcessDropDownBar();
+	}
 
-		GUI.ProcessInput(MouseLastX, MouseLastY, Mouse.isButtonDown(0));
-		ProcessFileMenu();
-		ProcessNewEntityMenu();
-		ProcessEditMenu();
-		// Animation
-		if (GUI.getElementDown(4) != null) {
-			ColorRenderer.RecreateTiles();
-			FrameCount.setText(ColorRenderer.getFrameAsString());
-			GUI.flushObject(4);
-		}
-		if (GUI.isElementDown(10, 2)) {
+	private void ProcessViewBar() {
+		if (GUI_Controller.isElementDown("DropDownBar","View", 2)) {
 			ColorRenderer.Center();
 
-		}
-		if (GUI.isButtonDown(3)) {
-			ColorRenderer.addFrame(-1);
-			FrameCount.setText(ColorRenderer.getFrameAsString());
-		}
-		if (GUI.isButtonDown(1)) {
-			ColorRenderer.setPlaying(false);
-			testString = "no";
-		}
-		if (GUI.isButtonDown(2)) {
-			ColorRenderer.setPlaying(true);
-			testString = "yes";
-		}
-		if (GUI.isButtonDown(4)) {
-			ColorRenderer.addFrame(1);
-			FrameCount.setText(ColorRenderer.getFrameAsString());
-		}
-		GUI_Object_Element goe = GUI.getElementDown(0);
-		if (goe != null) {
-			testString = goe.getName();
-		}
-		if (CurrentProject != null) {
-			if (GUI.getElementDown(1) != null) {
-				int goe2 = GUI.getIndexDown(1);
-				System.out.println("Set_Sprite: "
-						+ CurrentProject.getSprite(goe2).getName());
-				ColorRenderer.setSprite(CurrentProject.getSprite(goe2));
-				GUI.flushObject(1);
-				// System.out.println("Sprite change complete");
-			}
 		}
 		
 	}
 
+	private void ProcessDropDownBar() {
+		//Implement clicks on "File" menu
+		ProcessFileMenu();
+		//Implement clicks on "New" menu
+		ProcessNewEntityMenu();
+		//Implement clicks on "Edit" menu
+		ProcessEditMenu();
+		//Implement clicks on "View" menu
+		ProcessViewBar();
+		
+	}
+
+	private void ProcessBottomBar() {
+		if (GUI_Controller.isButtonDown("BottomBar","Pause")) {
+			ColorRenderer.setPlaying(false);
+			testString = "no";
+		}
+		if (GUI_Controller.isButtonDown("BottomBar","Play")) {
+			ColorRenderer.setPlaying(true);
+			testString = "yes";
+		}
+		if (GUI_Controller.isButtonDown("BottomBar","PrevFrame")) {
+			ColorRenderer.addFrame(-1);
+			FrameCount.setText(ColorRenderer.getFrameAsString());
+		}
+		if (GUI_Controller.isButtonDown("BottomBar","NextFrame")) {
+			ColorRenderer.addFrame(1);
+			FrameCount.setText(ColorRenderer.getFrameAsString());
+		}
+		if (GUI_Controller.getElementDown("BottomBar","AnimList") != null) {
+			ColorRenderer.RecreateTiles();
+			FrameCount.setText(ColorRenderer.getFrameAsString());
+			GUI_Controller.flushObject("BottomBar","AnimList");
+		}
+	}
+
+	private void ProcessSideBar() {
+		if (CurrentProject != null) {
+			if (GUI_Controller.getElementDown("SideBar","SpriteScrollList") != null) {
+				int goe2 = GUI_Controller.getIndexDown("SideBar","SpriteScrollList");
+				System.out.println("Set Sprite to: "
+						+ CurrentProject.getSprite(goe2).getName());
+				ColorRenderer.setSprite(CurrentProject.getSprite(goe2));
+				GUI_Controller.flushObject("SideBar","SpriteScrollList");
+			}
+		}
+	}
+
 	private void ProcessFileMenu() {
-		if (GUI.isElementDown(7, 0)) {
+		if (GUI_Controller.isElementDown("DropDownBar","File", 0)) {
 			Dialog_New_Project dialog = new Dialog_New_Project(this);
-			GUI.flushObject(7);
-		} else if (GUI.isElementDown(7, 1)) {
+			GUI_Controller.flushObject("DropDownBar","File");
+		} else if (GUI_Controller.isElementDown("DropDownBar","File", 1)) {
 			// if (CurrentProject != null) {
 			LoadProject();
-			GUI.flushObject(7);
+			GUI_Controller.flushObject("DropDownBar","File");
 			// }
 
-		} else if (GUI.isElementDown(7, 2)) {
+		} else if (GUI_Controller.isElementDown("DropDownBar","File", 2)) {
 			if (CurrentProject != null) {
 				SaveProject();
-				GUI.flushObject(7);
+				GUI_Controller.flushObject("DropDownBar","File");
 			}
 
-		} else if (GUI.isElementDown(7, 4)) {
-			// WRITE GIFS, FUCK YEAH BABY!
-			// GIFS GIFS GIFS!
-			// SUCK IT BITCHES :P
-			// #ThugLife
+		} else if (GUI_Controller.isElementDown("DropDownBar","File", 4)) {
 			if (ColorRenderer.hasSprite()) {
 				FiletypeBrowser gb = new FiletypeBrowser("gif");
 				String path = gb.GetSavePath();
@@ -399,9 +403,9 @@ public class State_SPRITER extends State {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				GUI.flushObject(7);
+				GUI_Controller.flushObject("DropDownBar","File");
 			}
-		} else if (GUI.isElementDown(7, 5)) {
+		} else if (GUI_Controller.isElementDown("DropDownBar","File", 5)) {
 
 			if (ColorRenderer.hasSprite()) {
 				FiletypeBrowser gb = new FiletypeBrowser("png");
@@ -411,9 +415,9 @@ public class State_SPRITER extends State {
 						.getSpriteSlides();
 
 				BufferedImageCreator.createPNG(ca, 1, true, path);
-				GUI.flushObject(7);
+				GUI_Controller.flushObject("DropDownBar","File");
 			}
-		} else if (GUI.isElementDown(7, 6)) {
+		} else if (GUI_Controller.isElementDown("DropDownBar","File", 6)) {
 
 			if (ColorRenderer.hasSprite()) {
 				FiletypeBrowser gb = new FiletypeBrowser("png");
@@ -430,9 +434,9 @@ public class State_SPRITER extends State {
 					System.err.println("Caught Exception @png import " + e.getMessage());
 					e.printStackTrace();
 				}
-				GUI.flushObject(7);
+				GUI_Controller.flushObject("DropDownBar","File");
 			}
-		} else if (GUI.isElementDown(7, 3)) {
+		} else if (GUI_Controller.isElementDown("DropDownBar","File", 3)) {
 
 			if (ColorRenderer.hasSprite()) {
 				try {
@@ -441,13 +445,13 @@ public class State_SPRITER extends State {
 					System.err.println("Caught Exception @Project export: " + e.getMessage());
 					e.printStackTrace();
 				}
-				GUI.flushObject(7);
+				GUI_Controller.flushObject("DropDownBar","File");
 			}
 		}
 	}
 
 	private void ProcessNewEntityMenu() {
-		if (GUI.isElementDown(8, 0)) {
+		if (GUI_Controller.isElementDown("DropDownBar","New", 0)) {
 			if (CurrentProject == null) {
 				Dialog_New_Project dialog = new Dialog_New_Project(this);
 			}
@@ -457,42 +461,42 @@ public class State_SPRITER extends State {
 				ProjectScrollList.Sync(CurrentProject);
 			}
 
-			GUI.flushObject(8);
+			GUI_Controller.flushObject("DropDownBar","New");
 
-		} else if (GUI.isElementDown(8, 1)) {
+		} else if (GUI_Controller.isElementDown("DropDownBar","New", 1)) {
 			if (ColorRenderer.hasSprite())
 				ColorRenderer.NewDialog(false);
-			GUI.flushObject(8);
+			GUI_Controller.flushObject("DropDownBar","New");
 		}
 
 	}
 
 	private void ProcessEditMenu() {
-		if (GUI.isElementDown(9, 2)) {
+		if (GUI_Controller.isElementDown("DropDownBar","Edit", 2)) {
 
 			if (CurrentProject != null) {
 				ColorRenderer.CopyFrame();
 			}
 			System.out.println("copied frame");
-			GUI.flushObject(9);
+			GUI_Controller.flushObject("DropDownBar","Edit");
 
 		}
-		if (GUI.isElementDown(9, 3)) {
+		if (GUI_Controller.isElementDown("DropDownBar","Edit", 3)) {
 
 			if (CurrentProject != null) {
 				ColorRenderer.PasteFrame();
 			}
 
-			GUI.flushObject(9);
+			GUI_Controller.flushObject("DropDownBar","Edit");
 
 		}
-		if (GUI.isElementDown(9, 4)) {
+		if (GUI_Controller.isElementDown("DropDownBar","Edit", 4)) {
 
 			if (CurrentProject != null) {
 				ColorRenderer.PasteClipboard();
 			}
 
-			GUI.flushObject(9);
+			GUI_Controller.flushObject("DropDownBar","Edit");
 
 		}
 
@@ -521,8 +525,7 @@ public class State_SPRITER extends State {
 
 	@Override
 	protected void Render2D() {
-
-		GUI.Render();
+		GUI_Controller.Render();
 		font.drawString(5, 5, testString, Color.black);
 		font.drawString(
 				5,
@@ -703,7 +706,7 @@ public class State_SPRITER extends State {
 			GUI_Entity.UpdateHeight();
 			WIDTH=Display.getWidth();
 			HEIGHT=Display.getHeight();
-			GUI.onResize();
+			GUI_Controller.onResize();
 		
 		}
 	}

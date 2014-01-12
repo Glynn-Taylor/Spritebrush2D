@@ -21,12 +21,12 @@ public class GUI_Renderer_ColorInterface extends GUI_Object {
 	public GUI_Renderer_ColorInterface(RelativeDimensions absoluteDimensions, GUI_Renderer_ColorArray colArray, Texture Switch,
 			Texture Palette) {
 		this.AbsoluteDimensions= absoluteDimensions; 
-		Elements.add(new GUI_Object_Element(new RelativeDimensions(AbsoluteDimensions.GetRelativeX() + (int) (AbsoluteDimensions.GetRelativeW() * 4f / 5f),
-				AbsoluteDimensions.GetRelativeY(), (int) (AbsoluteDimensions.GetRelativeW() * 1f / 5f), (int) (AbsoluteDimensions.GetRelativeW() * 1f / 5f)),
+		Elements.add(new GUI_Object_Element(new RelativeDimensions(AbsoluteDimensions.GetRelativeX() + (AbsoluteDimensions.GetRelativeW() * 4f / 5f),
+				AbsoluteDimensions.GetRelativeY(),  (AbsoluteDimensions.GetRelativeW() * 1f / 5f), (AbsoluteDimensions.GetRelativeW() * 1f / 5f)),
 				Switch, ""));
 		Elements.add(new GUI_Object_Element(new RelativeDimensions(AbsoluteDimensions.GetRelativeX(), AbsoluteDimensions.GetRelativeY()
-				+ (int) (AbsoluteDimensions.GetRelativeH() * 4f / 5f), (int) (AbsoluteDimensions.GetRelativeH() * 1f / 5f),
-				(int) (AbsoluteDimensions.GetRelativeH() * 1f / 5f)), Palette, ""));
+				+ (AbsoluteDimensions.GetRelativeH() * 4f / 5f), (AbsoluteDimensions.GetRelativeH() * 1f / 5f),
+				 (AbsoluteDimensions.GetRelativeH() * 1f / 5f)), Palette, ""));
 		onResize();
 		ColorRenderer = colArray;
 		
@@ -56,10 +56,7 @@ public class GUI_Renderer_ColorInterface extends GUI_Object {
 
 	@Override
 	protected void RenderElements() {
-
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		// Box(ScreenX, ScreenY, ScreenButtonWidth, ScreenButtonHeight,
-		// Color.white);
 		Box(EntityWindowX, EntityWindowY, EntityWidth, EntityHeight,
 				Color.black);
 		Box(EntityWindowX + 5, EntityWindowY + 5, EntityWidth - 10,
