@@ -4,6 +4,7 @@ import game.data.sprite.Colour;
 import game.graphics.dialog.Dialog_New_Sprite;
 import game.graphics.tools.DrawMode;
 import game.graphics.tools.Pencil;
+import game.states.State_SPRITER;
 import game.util.EditorSprite2D;
 import game.util.ToolBar;
 
@@ -12,6 +13,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -263,7 +266,12 @@ public class GUI_Renderer_ColorArray extends GUI_Object {
 
 	public boolean hasSprite() {
 		// TODO Auto-generated method stub
+		if(CurrentSprite==null){
+			State_SPRITER.SpriterStatusLog.PushText("No Sprite!");
+		}
+		System.out.println("Has sprite called");
 		return CurrentSprite != null;
+		
 	}
 
 	public EditorSprite2D getEditorSprite() {

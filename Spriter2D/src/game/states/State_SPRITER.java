@@ -31,6 +31,7 @@ import game.graphics.GUI_Object_Element;
 import game.graphics.GUI_Renderer_ColorArray;
 import game.graphics.GUI_Renderer_ColorInterface;
 import game.graphics.GUI_Renderer_Palette;
+import game.graphics.GUI_Status;
 import game.graphics.GUI_Text_Field;
 import game.graphics.RelativeDimensions;
 import game.graphics.dialog.Dialog_New_Project;
@@ -60,11 +61,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.SlickException;
@@ -78,28 +77,32 @@ import org.xml.sax.InputSource;
 
 public class State_SPRITER extends State {
 	private GUI_Layer_Controller GUI_Controller = new GUI_Layer_Controller();
-	//private final 
-	UnicodeFont font;
-	int WIDTH,HEIGHT;
+	
+	private UnicodeFont font;
+	private int WIDTH,HEIGHT;
 	private GUI_Renderer_ColorArray ColorRenderer;
 	private GUI_Text_Field FrameCount;
 	private GUI_Text_Field ProjectName;
 	private GUI_List_Scroll_Project ProjectScrollList;
 	private Project CurrentProject;
-
+	private ColorPicker picker;
+	public static GUI_Status SpriterStatusLog = new GUI_Status();
 	@Override
 	protected void Init() {
 		GUI_Layer Layer_DropdownBar = new GUI_Layer();
 		GUI_Layer Layer_SideBar = new GUI_Layer();
 		GUI_Layer Layer_BottomBar = new GUI_Layer();
 		GUI_Layer Layer_SpriteEditor = new GUI_Layer();
+		GUI_Layer Layer_Floating = new GUI_Layer();
 		WIDTH=Game.Width;
 		HEIGHT=Game.Height;
 		font = LoadFont("ABEAKRG");
 		float ButtonStartRX = (5f / 19f );
 		float ButtonRWidth =  (14f / 171f);
-		int DropDownHeight = (int)(HEIGHT * 1f / 15f);
+		int DropDownHeight = (int)(HEIGHT * 1f / 20f);
 		int BaseBarHeight = (int)(HEIGHT * 1f / 15f);
+		int Dropdowns = 8;
+		
 		try {
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			Texture playButton = TextureLoader
@@ -213,7 +216,7 @@ public class State_SPRITER extends State {
 			Layer_BottomBar.addObject("AnimList",AnimationList);
 			
 			///////////////////////////////DROPDOWN BAR//////////////////////////////////////////
-			Layer_DropdownBar.addObject("File",new GUI_List_DropDown(0, 0, (int) (WIDTH * 1f / 5f),
+			Layer_DropdownBar.addObject("File",new GUI_List_DropDown(0, 0, (int) (WIDTH * 1f / Dropdowns),
 					DropDownHeight, new GUI_Object_Element(new RelativeDimensions(0, 0, 0,
 							0), button2, "File"), new GUI_Object_Element[] {
 							new GUI_Object_Element(button2,
@@ -230,16 +233,16 @@ public class State_SPRITER extends State {
 									"Export sprite PNG.."),
 							new GUI_Object_Element( button2,
 									"Import GIF..")}, font));
-			Layer_DropdownBar.addObject("New",new GUI_List_DropDown((int) (WIDTH * 1f / 5f), 0,
-					(int) (WIDTH * 1f / 5f), DropDownHeight,
+			Layer_DropdownBar.addObject("New",new GUI_List_DropDown((int) (WIDTH * 1f / Dropdowns), 0,
+					(int) (WIDTH * 1f / Dropdowns), DropDownHeight,
 					new GUI_Object_Element( button2, "New"),
 					new GUI_Object_Element[] {
 							new GUI_Object_Element(button2,
 									"Sprite.."),
 							new GUI_Object_Element(button2,
 									"Animation..") }, font));
-			Layer_DropdownBar.addObject("Edit",new GUI_List_DropDown((int) (WIDTH * 2f / 5f), 0,
-					(int) (WIDTH * 1f / 5f), DropDownHeight,
+			Layer_DropdownBar.addObject("Edit",new GUI_List_DropDown((int) (WIDTH * 2f / Dropdowns), 0,
+					(int) (WIDTH * 1f / Dropdowns), DropDownHeight,
 					new GUI_Object_Element( button2, "Edit"),
 					new GUI_Object_Element[] {
 							new GUI_Object_Element( button2,
@@ -252,8 +255,8 @@ public class State_SPRITER extends State {
 									"Paste frame"),
 							new GUI_Object_Element( button2,
 									"Paste clipboard image") }, font));
-			Layer_DropdownBar.addObject("View",new GUI_List_DropDown((int) (WIDTH * 3f / 5f), 0,
-					(int) (WIDTH * 1f / 5f), DropDownHeight,
+			Layer_DropdownBar.addObject("View",new GUI_List_DropDown((int) (WIDTH * 3f / Dropdowns), 0,
+					(int) (WIDTH * 1f / Dropdowns), DropDownHeight,
 					new GUI_Object_Element( button2, "View"),
 					new GUI_Object_Element[] {
 							new GUI_Object_Element( button2,
@@ -262,12 +265,45 @@ public class State_SPRITER extends State {
 									"Zoom out"),
 							new GUI_Object_Element(button2,
 									"Center view") }, font));
-			
+			Layer_DropdownBar.addObject("Frame",new GUI_List_DropDown((int) (WIDTH * 4f / Dropdowns), 0,
+					(int) (WIDTH * 1f / Dropdowns), DropDownHeight,
+					new GUI_Object_Element( button2, "Frame"),
+					new GUI_Object_Element[] {
+							new GUI_Object_Element(button2,
+									"Element 0"),
+							new GUI_Object_Element(button2,
+									"Element 1") }, font));
+			Layer_DropdownBar.addObject("Sprite",new GUI_List_DropDown((int) (WIDTH * 5f / Dropdowns), 0,
+					(int) (WIDTH * 1f / Dropdowns), DropDownHeight,
+					new GUI_Object_Element( button2, "Sprite"),
+					new GUI_Object_Element[] {
+							new GUI_Object_Element(button2,
+									"Element 0"),
+							new GUI_Object_Element(button2,
+									"Element 1") }, font));
+			Layer_DropdownBar.addObject("Effects",new GUI_List_DropDown((int) (WIDTH * 6f / Dropdowns), 0,
+					(int) (WIDTH * 1f / Dropdowns), DropDownHeight,
+					new GUI_Object_Element( button2, "Effects"),
+					new GUI_Object_Element[] {
+							new GUI_Object_Element(button2,
+									"Element 0"),
+							new GUI_Object_Element(button2,
+									"Element 1") }, font));
+			Layer_DropdownBar.addObject("Project",new GUI_List_DropDown((int) (WIDTH * 7f / Dropdowns), 0,
+					(int) (WIDTH * 1f / Dropdowns), DropDownHeight,
+					new GUI_Object_Element( button2, "Project"),
+					new GUI_Object_Element[] {
+							new GUI_Object_Element(button2,
+									"Element 0"),
+							new GUI_Object_Element(button2,
+									"Element 1") }, font));
 			
 			picker = new ColorPicker(ColorRenderer);
 			
-			//**Layer ordering**//
+			//////Layer ordering//////
 			//0 is frontmost element//
+			GUI_Controller.addLayer(Layer_Floating, "Floating");
+			//Layer_DropdownBar.setAutoFlush(true);
 			GUI_Controller.addLayer(Layer_DropdownBar, "DropDownBar");
 			GUI_Controller.addLayer(Layer_SideBar, "SideBar");
 			GUI_Controller.addLayer(Layer_BottomBar, "BottomBar");
@@ -293,7 +329,7 @@ public class State_SPRITER extends State {
 
 	}
 
-	ColorPicker picker;
+	
 
 	@Override
 	protected void ProcessInput() {
@@ -334,11 +370,9 @@ public class State_SPRITER extends State {
 	private void ProcessBottomBar() {
 		if (GUI_Controller.isButtonDown("BottomBar","Pause")) {
 			ColorRenderer.setPlaying(false);
-			testString = "no";
 		}
 		if (GUI_Controller.isButtonDown("BottomBar","Play")) {
 			ColorRenderer.setPlaying(true);
-			testString = "yes";
 		}
 		if (GUI_Controller.isButtonDown("BottomBar","PrevFrame")) {
 			ColorRenderer.addFrame(-1);
@@ -521,12 +555,13 @@ public class State_SPRITER extends State {
 		// System.out.println(Mouse.getDWheel());
 	}
 
-	private String testString = "I'm a ttf font!";
+	
 
 	@Override
 	protected void Render2D() {
 		GUI_Controller.Render();
-		font.drawString(5, 5, testString, Color.black);
+		SpriterStatusLog.DrawText( font);
+		//font.drawString(5, 5, testString, Color.black);
 		font.drawString(
 				5,
 				20,

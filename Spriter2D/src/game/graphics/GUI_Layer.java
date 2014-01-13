@@ -18,6 +18,7 @@ package game.graphics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -35,6 +36,7 @@ public class GUI_Layer {
 	private final ArrayList<GUI_Object> objects = new ArrayList<GUI_Object>();
 	private HashMap<String,Integer> ObjectNameToIndex = new HashMap<String, Integer>();
 	private GUI_Layer_Controller Controller;
+	private boolean AutoFlush=false;
 	
 	public void Render() {
 		if (Enabled) {
@@ -92,16 +94,31 @@ public class GUI_Layer {
 	}
 
 	public void AddButton(String name,RelativeDimensions absoluteDimensions, Texture t) {
+		if(!ButtonNameToIndex.containsKey(name)){
 		ButtonNameToIndex.put(name, Buttons.size());
 		Buttons.add(new GUI_Button(absoluteDimensions, t));
 		ButtonClicked = new boolean[Buttons.size()];
+		}
 	}
 
 	public void addObject(String name,GUI_Object obj) {
-		ObjectNameToIndex.put(name, objects.size());
-		objects.add(obj);
-
+		if(!ObjectNameToIndex.containsKey(name)){
+			ObjectNameToIndex.put(name, objects.size());
+			objects.add(obj);
+		}
 	}
+	public void destroyObject(String name){
+		if(ObjectNameToIndex.containsKey(name)){
+			int index = ObjectNameToIndex.get(name);
+			ObjectNameToIndex.remove(name);
+			for (Map.Entry<String,Integer> entry : ObjectNameToIndex.entrySet()) {
+				if(entry.getValue()>index)
+					entry.setValue(entry.getValue()-1);
+			}
+			objects.remove(index);
+		}
+	}
+	
 	public void flushObject(String object) {
 		objects.get(ObjectNameToIndex.get(object)).ReleaseClicks();
 		objects.get(ObjectNameToIndex.get(object)).OnEndActivation();
@@ -140,8 +157,8 @@ public class GUI_Layer {
 	}
 
 	public boolean isElementDown(String object, int element) {
-		//if(objects.get(ObjectNameToIndex.get(object)).isElementDown(element))
-			//flushAll();
+		if(AutoFlush)
+			flushAll();
 		return objects.get(ObjectNameToIndex.get(object)).isElementDown(element);
 
 	}
@@ -200,5 +217,8 @@ public class GUI_Layer {
 	}
 	public void setController(GUI_Layer_Controller lc){
 		Controller=lc;
+	}
+	public void setAutoFlush(boolean b){
+		AutoFlush=b;
 	}
 }
