@@ -7,12 +7,14 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 
 public class GUI_Status {
-	private RelativeDimensions Dimensions = new RelativeDimensions(0.5F-0.15F, 0.5F-0.05F, 0.15F, 0.05F);
+	private RelativeDimensions Dimensions = new RelativeDimensions(0.5F-0.075F, 0.5F-0.025F, 0.15F, 0.05F);
 	private String Text="";
 	long InitialDraw;
 	long TimeSince;
 	boolean Drawing=false;
-	private final float DisplayTime=500F;
+	private final float DisplayTime=1700F;
+	
+	//Use release clicks in colorinterface for drop downs too?
 	
 	public void PushText(String s){
 		if(Text!=s){
@@ -38,9 +40,7 @@ public class GUI_Status {
 				Box(x + 5, y + 5, w - 10,
 						h - 10, cw);
 				RenderText(x,y,w,h, font,cb);
-				//font.drawString(x, y, Text, new Color(0, 0, 0, 1-(TimeSince/5000)));
 				Color.white.bind();
-				System.out.println("drawing");
 			}
 		}
 	}

@@ -3,7 +3,8 @@ package game.graphics;
 import org.lwjgl.opengl.Display;
 
 public class RelativeDimensions {
-	private final float XRelative,YRelative,WidthRelative,HeightRelative;
+	private final float WidthRelative,HeightRelative;
+	private float XRelative,YRelative;
 	public RelativeDimensions(float XRelative,float YRelative,float WidthRelative,float HeightRelative){
 		this.XRelative=XRelative;
 		this.YRelative=YRelative;
@@ -34,6 +35,14 @@ public class RelativeDimensions {
 	}
 	public float GetRelativeY(){
 		return (YRelative);
+	}
+	public void AdditiveRX(float percentX) {
+		XRelative+=percentX;
+		
+	}
+	public void AdditiveRY(float percentY) {
+		YRelative+=percentY;
+		
 	} 
 	
 }

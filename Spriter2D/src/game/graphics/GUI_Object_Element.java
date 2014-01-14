@@ -4,9 +4,10 @@ import game.states.Game;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.opengl.Texture;
 
-public class GUI_Object_Element extends GUI_Object {
+public class GUI_Object_Element extends GUI_Object_Graphical {
 
 	
 	public boolean Clicked = false;
@@ -85,7 +86,10 @@ public class GUI_Object_Element extends GUI_Object {
 		// MouseInsideMe = false;
 		// return false;
 	}
-
+	public void MoveByPercent(float x, float y){
+		AbsoluteDimensions.AdditiveRX(x);
+		AbsoluteDimensions.AdditiveRY(y);
+	}
 	/**
 	 * @return the name
 	 */
@@ -97,23 +101,9 @@ public class GUI_Object_Element extends GUI_Object {
 		Name = n;
 	}
 
-	void Box(int x, int y, int w, int h, Color c) {
-
-		c.bind();
-		GL11.glBegin(GL11.GL_QUADS);
-
-		GL11.glVertex3f(x, y, 0);
-
-		GL11.glVertex3f(x, y + h, 0);
-
-		GL11.glVertex3f(x + w, y + h, 0);
-
-		GL11.glVertex3f(x + w, y, 0);
-
-		GL11.glEnd();
-
+	public void RenderName(Font font, Color c) {
+		RenderText(Name, EntityWindowX, EntityWindowY, EntityWidth, EntityHeight, font, c);
 	}
-
 	@Override
 	public boolean ProcessInput(int mouseX, int mouseY, boolean mouseDown) {
 		// TODO Auto-generated method stub

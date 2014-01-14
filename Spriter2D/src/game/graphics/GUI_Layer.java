@@ -36,7 +36,7 @@ public class GUI_Layer {
 	private final ArrayList<GUI_Object> objects = new ArrayList<GUI_Object>();
 	private HashMap<String,Integer> ObjectNameToIndex = new HashMap<String, Integer>();
 	private GUI_Layer_Controller Controller;
-	private boolean AutoFlush=false;
+	//private boolean AutoFlush=false;
 	
 	public void Render() {
 		if (Enabled) {
@@ -157,8 +157,8 @@ public class GUI_Layer {
 	}
 
 	public boolean isElementDown(String object, int element) {
-		if(AutoFlush)
-			flushAll();
+		//if(AutoFlush)
+			//flushAll();
 		return objects.get(ObjectNameToIndex.get(object)).isElementDown(element);
 
 	}
@@ -218,7 +218,7 @@ public class GUI_Layer {
 	public void setController(GUI_Layer_Controller lc){
 		Controller=lc;
 	}
-	public void setAutoFlush(boolean b){
+	/*public void setAutoFlush(boolean b){
 		AutoFlush=b;
-	}
+	}*/
 }

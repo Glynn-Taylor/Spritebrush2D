@@ -33,6 +33,7 @@ import game.graphics.GUI_Renderer_ColorInterface;
 import game.graphics.GUI_Renderer_Palette;
 import game.graphics.GUI_Status;
 import game.graphics.GUI_Text_Field;
+import game.graphics.GUI_Window_Project_Properties;
 import game.graphics.RelativeDimensions;
 import game.graphics.dialog.Dialog_New_Project;
 import game.util.ColorPicker;
@@ -84,7 +85,7 @@ public class State_SPRITER extends State {
 	private GUI_Text_Field FrameCount;
 	private GUI_Text_Field ProjectName;
 	private GUI_List_Scroll_Project ProjectScrollList;
-	private Project CurrentProject;
+	public static Project CurrentProject;
 	private ColorPicker picker;
 	public static GUI_Status SpriterStatusLog = new GUI_Status();
 	@Override
@@ -160,7 +161,18 @@ public class State_SPRITER extends State {
 					ResourceLoader
 							.getResourceAsStream("res/Materials/GUI/Buttons/DefaultButton.png"),
 					false, GL11.GL_NEAREST);
-	
+			Texture tab = TextureLoader
+			.getTexture(
+					"PNG",
+					ResourceLoader
+							.getResourceAsStream("res/Materials/GUI/Buttons/Tab.png"),
+					false, GL11.GL_NEAREST);
+			Texture grabBar = TextureLoader
+			.getTexture(
+					"PNG",
+					ResourceLoader
+							.getResourceAsStream("res/Materials/GUI/Buttons/GrabBar.png"),
+					false, GL11.GL_NEAREST);
 			BackGroundImage = TextureLoader
 			.getTexture(
 					"PNG",
@@ -189,6 +201,8 @@ public class State_SPRITER extends State {
 			ProjectName = new GUI_Text_Field(new RelativeDimensions(0, 20f / 30f ,
 					5f / 19f ,  5f / 60f ),
 					"No project", font);
+			///////////////////////////////LAYER FLOATING////////////////////////////////////////////
+			Layer_Floating.addObject("ProjectProperties", new GUI_Window_Project_Properties(new RelativeDimensions(0.3f, 0.3f, 0.2f, 0.5f), tab,grabBar,font));
 			
 			///////////////////////////////SPRITE WINDOW////////////////////////////////////////////
 			Layer_SpriteEditor.addObject("SpriteWindow",ColorRenderer);
@@ -468,8 +482,8 @@ public class State_SPRITER extends State {
 					System.err.println("Caught Exception @png import " + e.getMessage());
 					e.printStackTrace();
 				}
-				GUI_Controller.flushObject("DropDownBar","File");
 			}
+			GUI_Controller.flushObject("DropDownBar","File");
 		} else if (GUI_Controller.isElementDown("DropDownBar","File", 3)) {
 
 			if (ColorRenderer.hasSprite()) {
@@ -745,4 +759,5 @@ public class State_SPRITER extends State {
 		
 		}
 	}
+	
 }

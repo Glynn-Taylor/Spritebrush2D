@@ -21,6 +21,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
+import org.lwjgl.opengl.Display;
+
 public class ToolBar {
 	JFrame frame;
 	DrawMode[] modes;
@@ -83,7 +85,9 @@ public class ToolBar {
 		frame.getContentPane().add(panel, BorderLayout.WEST);
 		// frame.getContentPane().add(label);
 		frame.pack();
+		
 		frame.setLocationRelativeTo(null);
+		frame.setLocation((int)(frame.getX()+Display.getWidth()*1f/3f),(int) (frame.getY()-Display.getHeight()*1f/4f));
 		frame.setVisible(true);
 		frame.setAlwaysOnTop(true);
 	}
