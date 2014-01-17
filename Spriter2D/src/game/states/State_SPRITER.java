@@ -316,6 +316,7 @@ public class State_SPRITER extends State {
 			
 			//////Layer ordering//////
 			//0 is frontmost element//
+			Layer_Floating.setUseDelay(false);
 			GUI_Controller.addLayer(Layer_Floating, "Floating");
 			//Layer_DropdownBar.setAutoFlush(true);
 			GUI_Controller.addLayer(Layer_DropdownBar, "DropDownBar");

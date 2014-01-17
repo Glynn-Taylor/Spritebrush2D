@@ -27,14 +27,18 @@ import org.newdawn.slick.opengl.Texture;
 
 public class GUI_Layer {
 	private final ArrayList<GUI_Button> Buttons = new ArrayList<GUI_Button>();
-	private HashMap<String,Integer> ButtonNameToIndex = new HashMap<String, Integer>();
-	private boolean[] ButtonClicked;
 	private final ArrayList<Boolean> ObjectPressed = new ArrayList<Boolean>();
-	private static long LastClickTime;
-	private final long RegisterClickDelay = 300;
-	private boolean Enabled = true;
 	private final ArrayList<GUI_Object> objects = new ArrayList<GUI_Object>();
+	private final long RegisterClickDelay = 300;
+	
+	private HashMap<String,Integer> ButtonNameToIndex = new HashMap<String, Integer>();
 	private HashMap<String,Integer> ObjectNameToIndex = new HashMap<String, Integer>();
+	
+	private boolean[] ButtonClicked;
+	private static long LastClickTime;
+	private boolean Enabled = true;
+	private boolean UseDelay = true;
+	
 	private GUI_Layer_Controller Controller;
 	//private boolean AutoFlush=false;
 	
@@ -75,7 +79,7 @@ public class GUI_Layer {
 			}
 			for (int i = 0; i < objects.size(); i++) {
 				if (objects.get(i).Enabled)
-					if (System.currentTimeMillis() - LastClickTime > RegisterClickDelay
+					if ((!UseDelay || System.currentTimeMillis() - LastClickTime > RegisterClickDelay)
 							&& objects.get(i).InsideObject(mouseX, mouseY)) {
 						if (objects.get(i).ProcessInput(mouseX, mouseY,
 								mouseDown)) {
@@ -182,6 +186,9 @@ public class GUI_Layer {
 	public void addElement(String object, GUI_Object_Element element) {
 		objects.get(ObjectNameToIndex.get(object)).addElement(element);
 
+	}
+	public void setUseDelay(boolean b){
+		UseDelay=b;
 	}
 
 	public void Box(int x, int y, int w, int h, Color c) {
